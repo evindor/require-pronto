@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>require-pronto Interactive Test</title>
+  <script src="../require-pronto.js"></script>
+  <script src="../require-pronto.dev.js"></script>
+  <script>
+    var ModuleA;
+    require(['module-a'], function (givenModuleA) { ModuleA = givenModuleA; });
+  </script>
+  <script>
+    console.log('required ' + ModuleA.name);
+  </script>
+</head>
+<body>
+</body>
+</html>
