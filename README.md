@@ -8,7 +8,8 @@ assumes the user loads his AMDs manually (usually a single concatenated
 and minified script file), and one to be used during development, which
 automatically loads AMDs via a document.write mechanism. The
 document.write mechanism enables a library to load its own code and be
-ready by the time the user attempts to make API calls.
+ready by the time the user attempts to make API calls, in other words,
+pronto.
 
 The API is similar to requirejs, but only the following patterns are
 supported:
