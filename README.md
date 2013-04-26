@@ -24,6 +24,7 @@ require.deps[moduleName]. Having access to the definition in this way
 allows dependency-injection-like patterns to be implemented on top of
 this bare-bones library.
 
-For the rationale behind this library, please see the blog
-post XX. Basically, it is supposed to be used by libraries where requirejs
-may be inappropriate due to its asynchronous nature.
+For the rationale behind this library, please see the
+[blog post](http://aloha-editor.org/blog/2013/04/aloha-and-asynchronous-script-loading/).
+Basically, it is supposed to be used by libraries where requirejs may be
+inappropriate due to its asynchronous nature.
