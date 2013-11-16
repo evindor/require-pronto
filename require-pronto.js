@@ -7,8 +7,8 @@
  * define('module', ['dep1', 'dep2', ...], function (Dep1, Dep2) { ... });
  */
 var define = (function () {
-	var deps = [],
-	    defs = [];
+	var deps = {},
+	    defs = {};
 	function define(module, deps, fn) {
 		deps[module] = deps;
 		defs[module] = fn;
