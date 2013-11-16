@@ -11,25 +11,20 @@
 var require = (function (wrappedRequire) {
 	var waiting = {};
 
-	function loadRec(modules, fn, paths) {
-		loadMany(modules, function () {
-			var nestedDeps = [],
-			    nestedPaths = [],
-			    i, j, k;
-			for (i = 0; i < modules.length; i++) {
-				// define.deps for each module will be filled during loading
-				nestedDeps = nestedDeps.concat(define.deps[modules[i]]);
-				var len = define.deps[modules[i]].length;
-				for (k = 0; k < len; k++) {
-					nestedPaths.push(define.paths[modules[i]]);
-				}
+	function done(module) {
+		var fns = waiting[module],
+		    i;
+		if (!define.defs[module]) {
+			throw 'module "' + module + '" doesn\'t contain a correct define';
+		}
+		if (fns) {
+			// Will not be loaded again since it is already defined, so let it
+			// be garbage collected.
+			delete waiting[module];
+			for (i = 0; i < fns.length; i++) {
+				fns[i]();
 			}
-			if (nestedDeps.length) {
-				loadRec(nestedDeps, fn, nestedPaths);
-			} else {
-				fn();
-			}
-		}, paths);
+		}
 	}
 
 	function load(module, fn, path) {
@@ -54,38 +49,37 @@ var require = (function (wrappedRequire) {
 		waiting[module].push(fn);
 	}
 
-	function done(module) {
-		var fns = waiting[module],
-		    i;
-		if (!define.defs[module]) {
-			throw 'module "' + module + '" doesn\'t contain a correct define';
-		}
-		if (fns) {
-			// Will not be loaded again since it is already defined, so let it
-			// be garbage collected.
-			delete waiting[module];
-			for (i = 0; i < fns.length; i++) {
-				fns[i]();
+	function nthCall(n, fn) {
+		return function () {
+			if (!n--) {
+				fn();
 			}
-		}
+		};
 	}
 
 	function loadMany(modules, fn, paths) {
-		var waitCount = modules.length,
+		var cb = nthCall(modules.length - 1, fn),
 		    i;
-		function makeCb() {
-			return function () {
-				if (!(--waitCount)) {
-					fn();
-				}
-			};
-		}
 		for (i = 0; i < modules.length; i++) {
-			load(modules[i], makeCb(), paths[i]);
+			load(modules[i], cb, paths[i]);
 		}
+	}
+
+	function loadRec(modules, fn, paths) {
 		if (!modules.length) {
 			fn();
 		}
+		loadMany(modules, function () {
+			var cb = nthCall(modules.length - 1, fn);
+			for (var i = 0; i < modules.length; i++) {
+				var deps = define.deps[modules[i]];
+				var paths = [];
+				for (var j = 0; j < deps.length; j++) {
+					paths.push(define.paths[modules[i]]);
+				}
+				loadRec(deps, cb, paths);
+			}
+		}, paths);
 	}
 
 	function require (modules, fn) {

@@ -22,8 +22,8 @@ var define = (function () {
 /**
  * A minimal synchronous require() implementation.
  *
- * It is assumed all modules have already been loaded and defined with
- * define().
+ * It is assumed that all modules have already been loaded and defined
+ * with define().
  *
  * Only supports the synchronous require pattern:
  * var Module = require('module');
@@ -35,7 +35,7 @@ var require = (function () {
 	var instances = {};
 	function require(module) {
 		var deps,
-		    depVals,
+		    depInstances,
 		    def,
 		    instance,
 		    i;
@@ -43,15 +43,15 @@ var require = (function () {
 			return instances[module];
 		}
 		deps = define.deps[module];
-		depVals = [];
+		depInstances = [];
 		// NB: If an error occurs here because deps is undefined, then
 		// it is probable that the module has a syntax error - check the
 		// console!
 		for (i = 0; i < deps.length; i++) {
-			depVals.push(require(deps[i]));
+			depInstances.push(require(deps[i]));
 		}
 		def = define.defs[module];
-		instance = def.apply(null, depVals);
+		instance = def.apply(null, depInstances);
 		instances[module] = instance;
 		return instance;
 	};
