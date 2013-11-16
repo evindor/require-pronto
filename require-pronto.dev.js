@@ -58,7 +58,7 @@
 				src = script.getAttribute('src');
 			}
 		}
-		return [name, (src ? src.replace(/\/[^\/]+$/, '') : '')];
+		return [name, (src && src.match(/\//) ? src.replace(/(^|\/)[^\/]+$/, '') : null)];
 	}
 
 	function define(module, deps, fn) {
