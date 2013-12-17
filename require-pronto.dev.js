@@ -1,6 +1,7 @@
 'use strict';
 
 // depends on require-pronto.js
+var require, define, pronto;
 
 /**
  * "maximum call stack size exceeded" messages are indicative of a
@@ -8,8 +9,10 @@
  *
  * Supports the synchronous convention var instance = require('module');
  */
-var require = (function (wrappedRequire) {
+require = (function (wrappedRequire, pronto) {
 	var waiting = {};
+
+	pronto = pronto || {};
 
 	function done(module) {
 		var fns = waiting[module],
@@ -40,8 +43,8 @@ var require = (function (wrappedRequire) {
 				url = path + '/' + module + '.js';
 			} else {
 				url = module + '.js';
-				if (require.urlPrefix) {
-					url = require.urlPrefix + url;
+				if (pronto.urlPrefix) {
+					url = pronto.urlPrefix + url;
 				}
 			}
 			document.write('<script src="' + url + '" data-pronto-name="' + module + '"></script>');
@@ -100,9 +103,9 @@ var require = (function (wrappedRequire) {
 	require.waiting = waiting;
 	require.done = done;
 	return require;
-}(require));
+}(require, pronto));
 
-var define = (function (wrappedDefine) {
+define = (function (wrappedDefine) {
 	var paths = {};
 
 	/**

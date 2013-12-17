@@ -1,12 +1,14 @@
 'use strict';
 
+var require, define;
+
 /**
  * A minimal define() implementation.
  *
  * Only supports the full define pattern:
  * define('module', ['dep1', 'dep2', ...], function (Dep1, Dep2) { ... });
  */
-var define = (function () {
+define = (function () {
 	var deps = {},
 	    defs = {};
 	function define(module, deps, fn) {
@@ -31,7 +33,7 @@ var define = (function () {
  * NB: "maximum call stack size exceeded" messages are indicative of a
  * recursive dependency.
  */
-var require = (function () {
+require = (function () {
 	var instances = {};
 	function require(module) {
 		var deps,
