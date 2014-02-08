@@ -1,4 +1,9 @@
 'use strict';
+//TODO let-like relative dependency resolution, where dependencies in a
+//subfolder will look first in that folder, then in the parent folder,
+//except if there is a prefix like 'dom/mutation' which makes it look in
+//the 'dom' subfolder first, then in the 'dom' subfolder of the parent,
+//etc. I'm not entirely sure but I think that's how requirejs does it.
 
 // depends on require-pronto.js
 var require, define, pronto;
