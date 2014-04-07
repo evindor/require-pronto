@@ -15,7 +15,8 @@ var require, define, pronto;
  * Supports the synchronous convention var instance = require('module');
  */
 require = (function (wrappedRequire, pronto) {
-	var waiting = {};
+	var waiting = {},
+        namespaces;
 
 	pronto = pronto || {};
 
@@ -44,18 +45,31 @@ require = (function (wrappedRequire, pronto) {
 		}
 		if (!waiting[module]) {
 			waiting[module] =  [];
-			if (null != path) {
-				url = path + '/' + module + '.js';
-			} else {
-				url = module + '.js';
-				if (pronto.urlPrefix) {
-					url = pronto.urlPrefix + url;
-				}
-			}
+            url = constructUrl(module);
+            if (pronto.urlPrefix) {
+                url = pronto.urlPrefix + url;
+            }
 			document.write('<script src="' + url + '" data-pronto-name="' + module + '"></script>');
 		}
 		waiting[module].push(fn);
 	}
+
+    function constructUrl(module) {
+        if (!namespaces || module.split("/").length === 1) {
+            return module + '.js';
+        }
+        var path = module.split("/");
+        var name = path.pop();
+        var url =  path.reduce(function(prev, curr ) {
+            if (!prev[curr]) return module + '.js';
+            return prev[curr];
+        }, namespaces);
+        if (url.baseUrl) {
+            return url.baseUrl + '/' + name + '.js';
+        } else {
+            return module + '.js';
+        }
+    }
 
 	function nthCall(n, fn) {
 		return function () {
@@ -103,6 +117,10 @@ require = (function (wrappedRequire, pronto) {
 			fn.apply(null, instances);
 		}, []);
 	}
+
+    require.config = function(conf) {
+        namespaces = conf.namespaces;
+    };
 
 	// Make it available to the world.
 	require.waiting = waiting;

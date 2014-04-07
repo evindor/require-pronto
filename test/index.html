@@ -6,6 +6,15 @@
   <script src="../require-pronto.js"></script>
   <script src="../require-pronto.dev.js"></script>
   <script>
+    require.config({
+        namespaces: {
+            'mod': {
+                baseUrl: 'd' 
+            }
+        }
+    });
+  </script>
+  <script>
     var ModuleA;
     require(['module-a'], function (givenModuleA) { ModuleA = givenModuleA; });
   </script>
